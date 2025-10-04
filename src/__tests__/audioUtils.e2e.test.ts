@@ -1,12 +1,13 @@
-const fs = require('fs');
-const os = require('os');
-const path = require('path');
-const { pcmToWav, saveDebugAudio } = require('../audioUtils');
+import fs from 'fs';
+import os from 'os';
+import path from 'path';
+// Import from js-backup since this is testing the original JS implementation
+const { pcmToWav, saveDebugAudio } = require('../js-backup/audioUtils');
 
 describe('audioUtils e2e', () => {
     it('creates wav and metadata files on disk', () => {
         const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'audio-e2e-'));
-        const origHome = vi.spyOn(require('os'), 'homedir').mockReturnValue(tmpDir);
+        const origHome = vi.spyOn(os, 'homedir').mockReturnValue(tmpDir);
 
         const samples = new Int16Array(16000).fill(1000); // 1s constant tone
         const buffer = Buffer.from(samples.buffer);
