@@ -1,6 +1,6 @@
 # Cheating Daddy - Codebase Analysis
 
-*Analysis performed on: October 4, 2025*
+_Analysis performed on: October 4, 2025_
 
 ## Project Overview
 
@@ -14,7 +14,9 @@
 ## Architecture & Structure
 
 ### Main Process (`src/index.js`)
+
 The main Electron process handles:
+
 - **IPC Handlers**: Configuration management (onboarding, stealth level, layout)
 - **Window Management**: Creation and lifecycle of the main application window
 - **Global Shortcuts**: Keyboard shortcuts for window positioning and controls
@@ -23,43 +25,50 @@ The main Electron process handles:
 - **Application Lifecycle**: Proper cleanup and quit handling
 
 ### Renderer Process
+
 - **Entry HTML**: `src/index.html` - Minimal HTML with CSS custom properties for theming
 - **Main Component**: `CheatingDaddyApp.js` - Lit-based web component managing the entire UI
 - **View System**: Multiple views with smooth transitions (Onboarding, Main, Customize, Help, History, Advanced, Assistant)
 - **Styling**: Responsive design with compact/normal layout modes
 
 ### Component Architecture
+
 - **Framework**: Lit (lightweight web components library)
 - **Structure**:
-  - `AppHeader.js` - Navigation and global controls
-  - `views/` directory containing view-specific components
-  - Event-driven communication between components
+    - `AppHeader.js` - Navigation and global controls
+    - `views/` directory containing view-specific components
+    - Event-driven communication between components
 - **State Management**: Lit's reactive properties system with localStorage persistence
 
 ## Core Functionality
 
 ### AI Integration (`utils/gemini.js`)
+
 **Google Gemini Live API Integration**:
+
 - **Model**: `gemini-live-2.5-flash-preview`
 - **Real-time Features**:
-  - Live audio transcription with speaker diarization
-  - Streaming conversation responses
-  - Automatic reconnection on connection loss
-  - Google Search tool integration
-  - Conversation history management
+    - Live audio transcription with speaker diarization
+    - Streaming conversation responses
+    - Automatic reconnection on connection loss
+    - Google Search tool integration
+    - Conversation history management
 
 **Audio Processing**:
+
 - 16kHz PCM audio format
 - Dual-stream capture (microphone + system audio)
 - Speaker identification (Interviewer/Candidate labeling)
 
 ### Audio Processing (`audioUtils.js`)
+
 - **Format Conversion**: PCM to WAV with proper headers
 - **Audio Analysis**: Buffer statistics (min/max values, RMS, silence detection, dynamic range)
 - **Debug Features**: Audio file saving for troubleshooting
 - **Quality Metrics**: Sample count, average values, silence percentage
 
 ### Stealth Features (`utils/stealthFeatures.js`)
+
 - **Anti-Analysis Measures**: Delayed initialization and obfuscation techniques
 - **Process Randomization**: Dynamic process naming for stealth operation
 - **Detection Avoidance**: Timing-based anti-analysis measures
@@ -67,14 +76,16 @@ The main Electron process handles:
 ## Configuration & Storage
 
 ### Configuration System (`config.js`)
+
 - **Format**: JSON-based local configuration
 - **Settings Managed**:
-  - Onboarding completion status
-  - Stealth level (visible/balanced/ultra)
-  - Layout mode (normal/compact)
-  - Window positioning and sizing
+    - Onboarding completion status
+    - Stealth level (visible/balanced/ultra)
+    - Layout mode (normal/compact)
+    - Window positioning and sizing
 
 ### Data Persistence
+
 - **UI Preferences**: localStorage for user settings and selections
 - **Conversation History**: IndexedDB for persistent chat history
 - **API Keys**: Secure localStorage storage
@@ -82,15 +93,17 @@ The main Electron process handles:
 ## Testing Infrastructure
 
 ### Test Framework
+
 - **Tool**: Vitest with JSDOM environment
 - **Configuration**: `vitest.config.js` with Electron mocking
 - **Coverage Areas**:
-  - Audio utilities (PCM conversion, analysis, debug saving)
-  - Conversation management (session handling, history)
-  - Speaker formatting and diarization
-  - Syntax highlighting (end-to-end)
+    - Audio utilities (PCM conversion, analysis, debug saving)
+    - Conversation management (session handling, history)
+    - Speaker formatting and diarization
+    - Syntax highlighting (end-to-end)
 
 ### Test Results
+
 - **Total Tests**: 7 tests across 5 test files
 - **Status**: All tests passing
 - **Test Types**: Unit tests and end-to-end integration tests
@@ -98,19 +111,21 @@ The main Electron process handles:
 ## Build & Packaging
 
 ### Build System
+
 - **Tool**: Electron Forge
 - **Packaging**: Multi-platform support (Windows, macOS, Linux)
 - **Distribution**: Ready for publishing to various app stores
 
 ### Scripts Available
+
 ```json
 {
-  "start": "electron-forge start",
-  "package": "electron-forge package",
-  "make": "electron-forge make",
-  "publish": "electron-forge publish",
-  "test": "vitest run",
-  "lint": "echo \"No linting configured\""
+    "start": "electron-forge start",
+    "package": "electron-forge package",
+    "make": "electron-forge make",
+    "publish": "electron-forge publish",
+    "test": "vitest run",
+    "lint": "echo \"No linting configured\""
 }
 ```
 
@@ -128,6 +143,7 @@ The main Electron process handles:
 ## Development Status
 
 ### Current Implementation ✅
+
 - Core real-time AI functionality
 - Audio/screen capture pipeline
 - Basic UI with multiple views
@@ -136,6 +152,7 @@ The main Electron process handles:
 - Basic test coverage
 
 ### Planned Improvements 🔄
+
 - **TypeScript Migration**: Gradual transition from JavaScript
 - **React Adoption**: Move from Lit to React components
 - **Local Transcription**: Integrate `whisper.cpp` for offline processing
@@ -147,6 +164,7 @@ The main Electron process handles:
 ## Code Quality Assessment
 
 ### Strengths
+
 - **Modular Architecture**: Well-separated concerns between main/renderer processes
 - **Error Handling**: Comprehensive error management and recovery
 - **Security**: Proper Electron context isolation and IPC validation
@@ -154,6 +172,7 @@ The main Electron process handles:
 - **Documentation**: Detailed AGENTS.md with development guidelines
 
 ### Areas for Improvement
+
 - **Type Safety**: JavaScript codebase (TypeScript migration planned)
 - **Testing Coverage**: Limited automated test suite
 - **Dependencies**: Some deprecated packages in package.json
@@ -163,12 +182,14 @@ The main Electron process handles:
 ## Security Considerations
 
 ### Implemented Security Measures
+
 - **Context Isolation**: Maintained Electron security boundaries
 - **IPC Validation**: Parameter sanitization across process boundaries
 - **Anti-Analysis**: Stealth features for sensitive use cases
 - **Privacy Design**: Local processing where possible, user-controlled data retention
 
 ### Security Architecture
+
 - **Process Separation**: Main process handles system operations, renderer handles UI
 - **Secure IPC**: Validated communication between processes
 - **Data Handling**: Secure storage of API keys and conversation data
@@ -176,15 +197,18 @@ The main Electron process handles:
 ## Dependencies Analysis
 
 ### Runtime Dependencies
+
 - `@google/genai`: ^1.2.0 - Google Gemini AI integration
 - `electron-squirrel-startup`: ^1.0.1 - Windows installer handling
 
 ### Development Dependencies
+
 - **Electron Forge**: Complete build and packaging toolchain
 - **Vitest**: Modern testing framework
 - **Electron**: ^30.0.5 - Latest stable version
 
 ### Notable Issues
+
 - **Deprecated Packages**: Some dependencies show deprecation warnings
 - **Vulnerabilities**: 5 reported (2 low, 3 moderate) - recommend `npm audit fix`
 
@@ -215,6 +239,7 @@ src/
 ## Development Guidelines
 
 ### Code Standards (from AGENTS.md)
+
 - **Future Migration**: Toward TypeScript/React architecture
 - **Component Pattern**: Functional components with hooks (planned)
 - **IPC Security**: Validate and sanitize all inter-process communication
@@ -222,6 +247,7 @@ src/
 - **Testing**: New features require test coverage
 
 ### UI Development
+
 - **Component Library**: Planned migration to shadcn/ui
 - **Path Aliases**: `@/` prefix for src directory imports
 - **React 19**: Target latest React with compiler (planned)

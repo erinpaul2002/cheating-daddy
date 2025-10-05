@@ -1,0 +1,71 @@
+/* Import existing CSS variables and global styles FIRST */
+@import './assets/global-styles.css';
+
+/* Tailwind CSS Directives */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Additional React-specific styles */
+.app-container {
+    width: 100vw;
+    height: 100vh;
+    background-color: var(--background-transparent);
+    color: var(--text-color);
+    font-family:
+        'Inter',
+        -apple-system,
+        BlinkMacSystemFont,
+        sans-serif;
+}
+
+@layer base {
+    /* Dark theme only - this app is always dark themed */
+    :root {
+        /* Override shadcn backgrounds to be transparent for Electron window */
+        --background: 0 0% 0% / 0; /* transparent */
+        --foreground: 0 0% 98%;
+        --card: 0 0% 0% / 0.8; /* semi-transparent black for cards */
+        --card-foreground: 0 0% 98%;
+        --popover: 0 0% 0% / 0.9; /* slightly more opaque for popovers */
+        --popover-foreground: 0 0% 98%;
+        --primary: 0 0% 98%;
+        --primary-foreground: 0 0% 9%;
+        --secondary: 0 0% 14.9%;
+        --secondary-foreground: 0 0% 98%;
+        --muted: 0 0% 14.9%;
+        --muted-foreground: 0 0% 63.9%;
+        --accent: 0 0% 14.9%;
+        --accent-foreground: 0 0% 98%;
+        --destructive: 0 62.8% 30.6%;
+        --destructive-foreground: 0 0% 98%;
+        --border: 0 0% 14.9%;
+        --input: 0 0% 14.9%;
+        --ring: 0 0% 83.1%;
+        --chart-1: 220 70% 50%;
+        --chart-2: 160 60% 45%;
+        --chart-3: 30 80% 55%;
+        --chart-4: 280 65% 60%;
+        --chart-5: 340 75% 55%;
+        --radius: 0.5rem;
+    }
+}
+
+@layer base {
+    * {
+        @apply border-border;
+    }
+    body {
+        @apply text-foreground;
+        /* Use original transparent background instead of shadcn default */
+        background: var(--background-transparent) !important;
+    }
+    html {
+        /* Use original transparent background */
+        background: var(--background-transparent) !important;
+    }
+    #root {
+        /* Ensure root container is also transparent */
+        background: var(--background-transparent) !important;
+    }
+}

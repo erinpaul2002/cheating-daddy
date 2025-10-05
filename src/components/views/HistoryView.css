@@ -1,0 +1,309 @@
+/* HistoryView.css */
+
+* {
+    font-family:
+        'Inter',
+        -apple-system,
+        BlinkMacSystemFont,
+        sans-serif;
+    cursor: default;
+    user-select: none;
+}
+
+.host {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.historyContainer {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.sessionsList {
+    flex: 1;
+    overflow-y: auto;
+    margin-bottom: 16px;
+    padding-bottom: 20px;
+}
+
+.sessionItem {
+    background: var(--input-background);
+    border: 1px solid var(--button-border);
+    border-radius: 6px;
+    padding: 12px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.sessionItem:hover {
+    background: var(--hover-background);
+    border-color: var(--focus-border-color);
+}
+
+.sessionItem.selected {
+    background: var(--focus-box-shadow);
+    border-color: var(--focus-border-color);
+}
+
+.sessionHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+}
+
+.sessionDate {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+.sessionTime {
+    font-size: 11px;
+    color: var(--description-color);
+}
+
+.sessionPreview {
+    font-size: 11px;
+    color: var(--description-color);
+    line-height: 1.3;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.conversationView {
+    flex: 1;
+    overflow-y: auto;
+    background: var(--main-content-background);
+    border: 1px solid var(--button-border);
+    border-radius: 6px;
+    padding: 12px;
+    padding-bottom: 20px;
+    user-select: text;
+    cursor: text;
+}
+
+.message {
+    margin-bottom: 6px;
+    padding: 6px 10px;
+    border-left: 3px solid transparent;
+    font-size: 12px;
+    line-height: 1.4;
+    background: var(--input-background);
+    border-radius: 0 4px 4px 0;
+    user-select: text;
+    cursor: text;
+}
+
+.message.user {
+    border-left-color: #5865f2; /* Discord blue */
+}
+
+.message.ai {
+    border-left-color: #ed4245; /* Discord red */
+}
+
+.backHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+/* Override shadcn Button styles for back button */
+.backButton {
+    background: var(--button-background) !important;
+    color: var(--text-color) !important;
+    border: 1px solid var(--button-border) !important;
+    padding: 6px 12px !important;
+    border-radius: 4px !important;
+    font-size: 11px !important;
+    font-weight: 500 !important;
+    cursor: pointer;
+    display: flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    transition: all 0.15s ease;
+    height: auto !important;
+    box-shadow: none !important;
+}
+
+.backButton:hover {
+    background: var(--hover-background) !important;
+}
+
+.legend {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.legendItem {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    color: var(--description-color);
+}
+
+.legendDot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+}
+
+.legendDot.user {
+    background-color: #5865f2; /* Discord blue */
+}
+
+.legendDot.ai {
+    background-color: #ed4245; /* Discord red */
+}
+
+.emptyState {
+    text-align: center;
+    color: var(--description-color);
+    font-size: 12px;
+    margin-top: 32px;
+}
+
+.emptyStateTitle {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: var(--text-color);
+}
+
+.loading {
+    text-align: center;
+    color: var(--description-color);
+    font-size: 12px;
+    margin-top: 32px;
+}
+
+/* Scrollbar styles for scrollable elements */
+.sessionsList::-webkit-scrollbar {
+    width: 6px;
+}
+
+.sessionsList::-webkit-scrollbar-track {
+    background: var(--scrollbar-track, rgba(0, 0, 0, 0.2));
+    border-radius: 3px;
+}
+
+.sessionsList::-webkit-scrollbar-thumb {
+    background: var(--scrollbar-thumb, rgba(255, 255, 255, 0.2));
+    border-radius: 3px;
+}
+
+.sessionsList::-webkit-scrollbar-thumb:hover {
+    background: var(--scrollbar-thumb-hover, rgba(255, 255, 255, 0.3));
+}
+
+.conversationView::-webkit-scrollbar {
+    width: 6px;
+}
+
+.conversationView::-webkit-scrollbar-track {
+    background: var(--scrollbar-track, rgba(0, 0, 0, 0.2));
+    border-radius: 3px;
+}
+
+.conversationView::-webkit-scrollbar-thumb {
+    background: var(--scrollbar-thumb, rgba(255, 255, 255, 0.2));
+    border-radius: 3px;
+}
+
+.conversationView::-webkit-scrollbar-thumb:hover {
+    background: var(--scrollbar-thumb-hover, rgba(255, 255, 255, 0.3));
+}
+
+.tabsContainer {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+    border-bottom: 1px solid var(--button-border);
+    padding-bottom: 8px;
+}
+
+.tab {
+    background: transparent;
+    color: var(--description-color);
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px 4px 0 0;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.tab:hover {
+    background: var(--hover-background);
+    color: var(--text-color);
+}
+
+.tab.active {
+    background: var(--focus-box-shadow);
+    color: var(--text-color);
+    border-bottom: 2px solid var(--focus-border-color);
+}
+
+.savedResponseItem {
+    background: var(--input-background);
+    border: 1px solid var(--button-border);
+    border-radius: 6px;
+    padding: 12px;
+    margin-bottom: 8px;
+    transition: all 0.15s ease;
+}
+
+.savedResponseHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 8px;
+}
+
+.savedResponseProfile {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--focus-border-color);
+    text-transform: capitalize;
+}
+
+.savedResponseDate {
+    font-size: 10px;
+    color: var(--description-color);
+}
+
+.savedResponseContent {
+    font-size: 12px;
+    color: var(--text-color);
+    line-height: 1.4;
+    user-select: text;
+    cursor: text;
+}
+
+.deleteButton {
+    background: transparent;
+    color: var(--description-color);
+    border: none;
+    padding: 4px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.deleteButton:hover {
+    background: rgba(255, 0, 0, 0.1);
+    color: #ff4444;
+}

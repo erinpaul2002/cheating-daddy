@@ -13,8 +13,8 @@ type Platform = 'win32' | 'darwin' | string;
 // Default configuration
 const DEFAULT_CONFIG: Config = {
     onboarded: false,
-    stealthLevel: "balanced",
-    layout: "normal"
+    stealthLevel: 'balanced',
+    layout: 'normal',
 };
 
 // Get the config directory path based on OS
@@ -120,7 +120,4 @@ function getLocalConfig(): Config {
 }
 
 // Export only the necessary functions
-export {
-    getLocalConfig,
-    writeConfig
-};
+export { getLocalConfig, writeConfig };

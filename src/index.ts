@@ -127,9 +127,15 @@ function setupGeneralIpcHandlers(): void {
     });
 
     ipcMain.handle('quit-application', async (event: IpcMainInvokeEvent): Promise<IpcResponse> => {
+        console.log('Received quit-application IPC call');
         try {
             stopMacOSAudioCapture();
-            app.quit();
+            console.log('Stopping audio capture, quitting app...');
+            // Quit after sending the response
+            setImmediate(() => {
+                console.log('Calling app.quit()');
+                app.quit();
+            });
             return { success: true };
         } catch (error) {
             console.error('Error quitting application:', error);

@@ -1,7 +1,5 @@
 // renderer.ts
-import { ipcRenderer } from 'electron';
-
-// Type definitions
+const { ipcRenderer } = (window as any).require('electron');
 interface TokenEntry {
     timestamp: number;
     count: number;
@@ -57,13 +55,11 @@ interface CheatingDaddyAppElement extends HTMLElement {
 type ImageQuality = 'high' | 'medium' | 'low';
 type AudioMode = 'speaker_only' | 'mic_only' | 'both';
 
-// Extend Window interface
-declare global {
-    interface Window {
-        randomDisplayName: string | null;
-        captureManualScreenshot: (imageQuality?: string | null) => Promise<void>;
-        cheddar: CheddarAPI;
-    }
+// Window extensions
+interface Window {
+    randomDisplayName: string | null;
+    captureManualScreenshot: (imageQuality?: string | null) => Promise<void>;
+    cheddar: CheddarAPI;
 }
 
 interface CheddarAPI {
@@ -87,18 +83,18 @@ interface CheddarAPI {
 }
 
 // Initialize random display name for UI components
-window.randomDisplayName = null;
+(window as any).randomDisplayName = null;
 
 // Request random display name from main process
 ipcRenderer
     .invoke('get-random-display-name')
     .then((name: string) => {
-        window.randomDisplayName = name;
+        (window as any).randomDisplayName = name;
         console.log('Set random display name:', name);
     })
     .catch((err: Error) => {
         console.warn('Could not get random display name:', err);
-        window.randomDisplayName = 'System Monitor';
+        (window as any).randomDisplayName = 'System Monitor';
     });
 
 let mediaStream: MediaStream | null = null;
@@ -237,7 +233,13 @@ function arrayBufferToBase64(buffer: ArrayBufferLike): string {
 async function initializeGemini(profile: string = 'interview', language: string = 'en-US'): Promise<void> {
     const apiKey = localStorage.getItem('apiKey')?.trim();
     if (apiKey) {
-        const success = await ipcRenderer.invoke('initialize-gemini', apiKey, localStorage.getItem('customPrompt') || '', profile, language) as boolean;
+        const success = (await ipcRenderer.invoke(
+            'initialize-gemini',
+            apiKey,
+            localStorage.getItem('customPrompt') || '',
+            profile,
+            language
+        )) as boolean;
         if (success) {
             cheddar.setStatus('Live');
         } else {
@@ -275,7 +277,7 @@ async function startCapture(screenshotIntervalSeconds: number | string = 5, imag
             console.log('Starting macOS capture with SystemAudioDump...');
 
             // Start macOS audio capture
-            const audioResult = await ipcRenderer.invoke('start-macos-audio') as InvokeResult;
+            const audioResult = (await ipcRenderer.invoke('start-macos-audio')) as InvokeResult;
             if (!audioResult.success) {
                 throw new Error('Failed to start macOS audio capture: ' + audioResult.error);
             }
@@ -628,9 +630,9 @@ async function captureScreenshot(imageQuality: string = 'medium', isManual: bool
                     return;
                 }
 
-                const invokeResult = await ipcRenderer.invoke('send-image-content', {
+                const invokeResult = (await ipcRenderer.invoke('send-image-content', {
                     data: base64data,
-                } as ImageContent) as InvokeResult;
+                } as ImageContent)) as InvokeResult;
 
                 if (invokeResult.success) {
                     // Track image tokens after successful send
@@ -663,7 +665,7 @@ async function captureManualScreenshot(imageQuality: string | null = null): Prom
 }
 
 // Expose functions to global scope for external access
-window.captureManualScreenshot = captureManualScreenshot;
+(window as any).captureManualScreenshot = captureManualScreenshot;
 
 function stopCapture(): void {
     if (screenshotInterval) {
@@ -717,7 +719,7 @@ async function sendTextMessage(text: string): Promise<InvokeResult> {
     }
 
     try {
-        const result = await ipcRenderer.invoke('send-text-message', text) as InvokeResult;
+        const result = (await ipcRenderer.invoke('send-text-message', text)) as InvokeResult;
         if (result.success) {
             console.log('Text message sent successfully');
         } else {
@@ -851,7 +853,8 @@ function handleShortcut(shortcutKey: string): void {
 
     if (shortcutKey === 'ctrl+enter' || shortcutKey === 'cmd+enter') {
         if (currentView === 'main') {
-            cheddar.element().handleStart();
+            // React handles its own start functionality
+            // cheddar.element().handleStart();
         } else {
             captureManualScreenshot();
         }
@@ -864,16 +867,16 @@ const cheatingDaddyApp = document.querySelector('cheating-daddy-app') as Cheatin
 // Consolidated cheddar object - all functions in one place
 const cheddar: CheddarAPI = {
     // Element access
-    element: () => cheatingDaddyApp,
-    e: () => cheatingDaddyApp,
+    element: () => ({ handleStart: () => {} }) as any, // Dummy object for React compatibility
+    e: () => ({ handleStart: () => {} }) as any, // Dummy object for React compatibility
 
     // App state functions - access properties directly from the app element
-    getCurrentView: () => cheatingDaddyApp.currentView,
-    getLayoutMode: () => cheatingDaddyApp.layoutMode,
+    getCurrentView: () => 'main', // Default to main view for React compatibility
+    getLayoutMode: () => 'normal', // Default layout mode
 
     // Status and response functions
-    setStatus: (text: string) => cheatingDaddyApp.setStatus(text),
-    setResponse: (response: string) => cheatingDaddyApp.setResponse(response),
+    setStatus: (text: string) => ipcRenderer.send('update-status', text),
+    setResponse: (response: string) => ipcRenderer.send('update-response', response),
 
     // Core functionality
     initializeGemini,
@@ -899,4 +902,4 @@ const cheddar: CheddarAPI = {
 };
 
 // Make it globally available
-window.cheddar = cheddar;
+(window as any).cheddar = cheddar;

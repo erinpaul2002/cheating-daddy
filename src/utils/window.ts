@@ -46,9 +46,6 @@ type SendToRenderer = (channel: string, ...args: any[]) => void;
 
 // Module state
 let mouseEventsIgnored = false;
-let windowResizing = false;
-let resizeAnimation: NodeJS.Timeout | null = null;
-const RESIZE_ANIMATION_DURATION = 500; // milliseconds
 
 export function ensureDataDirectories(): DataDirectories {
     const homeDir = os.homedir();
@@ -66,7 +63,11 @@ export function ensureDataDirectories(): DataDirectories {
     return { imageDir, audioDir };
 }
 
-export function createWindow(sendToRenderer: SendToRenderer, geminiSessionRef: GeminiSessionRef, randomNames: RandomNames | null = null): BrowserWindow {
+export function createWindow(
+    sendToRenderer: SendToRenderer,
+    geminiSessionRef: GeminiSessionRef,
+    randomNames: RandomNames | null = null
+): BrowserWindow {
     // Get layout preference (default to 'normal')
     let windowWidth = 1100;
     let windowHeight = 800;
@@ -82,7 +83,7 @@ export function createWindow(sendToRenderer: SendToRenderer, geminiSessionRef: G
         hiddenInMissionControl: true,
         webPreferences: {
             nodeIntegration: true,
-            contextIsolation: false, // TODO: change to true
+            contextIsolation: false, // TODO: enable context isolation after migration
             backgroundThrottling: false,
             enableBlinkFeatures: 'GetDisplayMedia',
             webSecurity: true,
@@ -91,13 +92,11 @@ export function createWindow(sendToRenderer: SendToRenderer, geminiSessionRef: G
         backgroundColor: '#00000000',
     });
 
-    session.defaultSession.setDisplayMediaRequestHandler(
-        (request, callback) => {
-            desktopCapturer.getSources({ types: ['screen'] }).then(sources => {
-                callback({ video: sources[0], audio: 'loopback' });
-            });
-        }
-    );
+    session.defaultSession.setDisplayMediaRequestHandler((request, callback) => {
+        desktopCapturer.getSources({ types: ['screen'] }).then(sources => {
+            callback({ video: sources[0], audio: 'loopback' });
+        });
+    });
 
     mainWindow.setResizable(false);
     mainWindow.setContentProtection(true);
@@ -115,6 +114,9 @@ export function createWindow(sendToRenderer: SendToRenderer, geminiSessionRef: G
     }
 
     mainWindow.loadFile(path.join(__dirname, '../index.html'));
+
+    // Open DevTools for debugging
+    mainWindow.webContents.openDevTools({ mode: 'detach' });
 
     // Set window title to random name if provided
     if (randomNames && randomNames.windowTitle) {
@@ -155,7 +157,7 @@ export function createWindow(sendToRenderer: SendToRenderer, geminiSessionRef: G
 
                     // Apply content protection setting via IPC handler
                     try {
-                        const contentProtection = await mainWindow.webContents.executeJavaScript('cheddar.getContentProtection()') as boolean;
+                        const contentProtection = (await mainWindow.webContents.executeJavaScript('cheddar.getContentProtection()')) as boolean;
                         mainWindow.setContentProtection(contentProtection);
                         console.log('Content protection loaded from settings:', contentProtection);
                     } catch (error) {
@@ -196,7 +198,12 @@ export function getDefaultKeybinds(): Keybinds {
     };
 }
 
-export function updateGlobalShortcuts(keybinds: Keybinds, mainWindow: BrowserWindow, sendToRenderer: SendToRenderer, geminiSessionRef: GeminiSessionRef): void {
+export function updateGlobalShortcuts(
+    keybinds: Keybinds,
+    mainWindow: BrowserWindow,
+    sendToRenderer: SendToRenderer,
+    geminiSessionRef: GeminiSessionRef
+): void {
     console.log('Updating global shortcuts with:', keybinds);
 
     // Unregister all existing shortcuts
@@ -419,89 +426,6 @@ export function setupWindowIpcHandlers(mainWindow: BrowserWindow, sendToRenderer
         }
     });
 
-    function animateWindowResize(mainWindow: BrowserWindow, targetWidth: number, targetHeight: number, layoutMode: string): Promise<void> {
-        return new Promise(resolve => {
-            // Check if window is destroyed before starting animation
-            if (mainWindow.isDestroyed()) {
-                console.log('Cannot animate resize: window has been destroyed');
-                resolve();
-                return;
-            }
-
-            // Clear any existing animation
-            if (resizeAnimation) {
-                clearInterval(resizeAnimation);
-                resizeAnimation = null;
-            }
-
-            const [startWidth, startHeight] = mainWindow.getSize();
-
-            // If already at target size, no need to animate
-            if (startWidth === targetWidth && startHeight === targetHeight) {
-                console.log(`Window already at target size for ${layoutMode} mode`);
-                resolve();
-                return;
-            }
-
-            console.log(`Starting animated resize from ${startWidth}x${startHeight} to ${targetWidth}x${targetHeight}`);
-
-            windowResizing = true;
-            mainWindow.setResizable(true);
-
-            const frameRate = 60; // 60 FPS
-            const totalFrames = Math.floor(RESIZE_ANIMATION_DURATION / (1000 / frameRate));
-            let currentFrame = 0;
-
-            const widthDiff = targetWidth - startWidth;
-            const heightDiff = targetHeight - startHeight;
-
-            resizeAnimation = setInterval(() => {
-                currentFrame++;
-                const progress = currentFrame / totalFrames;
-
-                // Use easing function (ease-out)
-                const easedProgress = 1 - Math.pow(1 - progress, 3);
-
-                const currentWidth = Math.round(startWidth + widthDiff * easedProgress);
-                const currentHeight = Math.round(startHeight + heightDiff * easedProgress);
-
-                if (!mainWindow || mainWindow.isDestroyed()) {
-                    clearInterval(resizeAnimation!);
-                    resizeAnimation = null;
-                    windowResizing = false;
-                    return;
-                }
-                mainWindow.setSize(currentWidth, currentHeight);
-
-                // Re-center the window during animation
-                const primaryDisplay = screen.getPrimaryDisplay();
-                const { width: screenWidth } = primaryDisplay.workAreaSize;
-                const x = Math.floor((screenWidth - currentWidth) / 2);
-                const y = 0;
-                mainWindow.setPosition(x, y);
-
-                if (currentFrame >= totalFrames) {
-                    clearInterval(resizeAnimation!);
-                    resizeAnimation = null;
-                    windowResizing = false;
-
-                    // Check if window is still valid before final operations
-                    if (!mainWindow.isDestroyed()) {
-                        mainWindow.setResizable(false);
-
-                        // Ensure final size is exact
-                        mainWindow.setSize(targetWidth, targetHeight);
-                        const finalX = Math.floor((screenWidth - targetWidth) / 2);
-                        mainWindow.setPosition(finalX, 0);
-                    }
-
-                    console.log(`Animation complete: ${targetWidth}x${targetHeight}`);
-                    resolve();
-                }
-            }, 1000 / frameRate);
-        });
-    }
-
     ipcMain.handle('update-sizes', async (event: IpcMainInvokeEvent) => {
         try {
             if (mainWindow.isDestroyed()) {
@@ -512,8 +436,8 @@ export function setupWindowIpcHandlers(mainWindow: BrowserWindow, sendToRenderer
             let viewName: string;
             let layoutMode: string;
             try {
-                viewName = await event.sender.executeJavaScript('cheddar.getCurrentView()') as string;
-                layoutMode = await event.sender.executeJavaScript('cheddar.getLayoutMode()') as string;
+                viewName = (await event.sender.executeJavaScript('cheddar.getCurrentView()')) as string;
+                layoutMode = (await event.sender.executeJavaScript('cheddar.getLayoutMode()')) as string;
             } catch (error) {
                 console.warn('Failed to get view/layout from renderer, using defaults:', error);
                 viewName = 'main';
@@ -558,14 +482,23 @@ export function setupWindowIpcHandlers(mainWindow: BrowserWindow, sendToRenderer
             }
 
             const [currentWidth, currentHeight] = mainWindow.getSize();
-            console.log('Current window size:', currentWidth, 'x', currentHeight);
 
-            // If currently resizing, the animation will start from current position
-            if (windowResizing) {
-                console.log('Interrupting current resize animation');
+            // Skip if already at target size
+            if (currentWidth === targetWidth && currentHeight === targetHeight) {
+                console.log(`Window already at target size: ${targetWidth}x${targetHeight}`);
+                return { success: true };
             }
 
-            await animateWindowResize(mainWindow, targetWidth, targetHeight, `${viewName} view (${layoutMode})`);
+            console.log(`Resizing window from ${currentWidth}x${currentHeight} to ${targetWidth}x${targetHeight}`);
+
+            // Instant resize - no animation needed since sizes are fixed per view
+            const primaryDisplay = screen.getPrimaryDisplay();
+            const { width: screenWidth } = primaryDisplay.workAreaSize;
+            const x = Math.floor((screenWidth - targetWidth) / 2);
+
+            mainWindow.setBounds({ x, y: 0, width: targetWidth, height: targetHeight }, false);
+
+            console.log(`Window resized to: ${targetWidth}x${targetHeight} for view: ${viewName} (${layoutMode})`);
 
             return { success: true };
         } catch (error) {

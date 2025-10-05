@@ -1,0 +1,169 @@
+/* Extracted from index.html */
+/* CSS Variables for the application */
+:root {
+  --background-transparent: transparent;
+  --text-color: #e5e5e7;
+  --border-color: rgba(255, 255, 255, 0.2);
+  --header-background: rgba(0, 0, 0, 0.8);
+  --header-actions-color: rgba(255, 255, 255, 0.6);
+  --main-content-background: rgba(0, 0, 0, 0.8);
+  --button-background: rgba(0, 0, 0, 0.5);
+  --button-border: rgba(255, 255, 255, 0.1);
+  --icon-button-color: rgb(229, 229, 231);
+  --hover-background: rgba(255, 255, 255, 0.1);
+  --input-background: rgba(0, 0, 0, 0.3);
+  --placeholder-color: rgba(255, 255, 255, 0.4);
+  --focus-border-color: #007aff;
+  --focus-box-shadow: rgba(0, 122, 255, 0.2);
+  --input-focus-background: rgba(0, 0, 0, 0.5);
+  --scrollbar-track: rgba(0, 0, 0, 0.2);
+  --scrollbar-thumb: rgba(255, 255, 255, 0.2);
+  --scrollbar-thumb-hover: rgba(255, 255, 255, 0.3);
+  --preview-video-background: rgba(0, 0, 0, 0.9);
+  --preview-video-border: rgba(255, 255, 255, 0.15);
+  --option-label-color: rgba(255, 255, 255, 0.8);
+  --screen-option-background: rgba(0, 0, 0, 0.4);
+  --screen-option-hover-background: rgba(0, 0, 0, 0.6);
+  --screen-option-selected-background: rgba(0, 122, 255, 0.15);
+  --screen-option-text: rgba(255, 255, 255, 0.7);
+  --description-color: rgba(255, 255, 255, 0.6);
+  --start-button-background: white;
+  --start-button-color: black;
+  --start-button-border: white;
+  --start-button-hover-background: rgba(255, 255, 255, 0.8);
+  --start-button-hover-border: rgba(0, 0, 0, 0.2);
+  --text-input-button-background: #007aff;
+  --text-input-button-hover: #0056b3;
+  --link-color: #007aff;
+  --key-background: rgba(255, 255, 255, 0.1);
+}
+
+/* Global utility classes */
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  font-family: 'Inter', sans-serif;
+  /* Hardware acceleration */
+  transform: translateZ(0);
+  -webkit-font-smoothing: subpixel-antialiased;
+}
+
+/* React-specific global styles */
+#root {
+  width: 100vw;
+  height: 100vh;
+  /* Hardware acceleration for smooth resizing */
+  transform: translateZ(0);
+  will-change: width, height;
+  backface-visibility: hidden;
+}
+
+/* Loading and error states */
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  background: var(--main-content-background);
+  color: var(--text-color);
+}
+
+.error-boundary {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  background: var(--main-content-background);
+  color: var(--text-color);
+  padding: 20px;
+  text-align: center;
+}
+
+.error-boundary h2 {
+  margin-bottom: 20px;
+}
+
+.error-boundary button {
+  padding: 10px 20px;
+  background: var(--start-button-background);
+  color: var(--start-button-color);
+  border: 1px solid var(--start-button-border);
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.error-boundary button:hover {
+  background: var(--start-button-hover-background);
+  border-color: var(--start-button-hover-border);
+}
+
+/* Main layout containers */
+.main-content {
+  flex: 1;
+  padding: var(--main-content-padding);
+  margin-top: var(--main-content-margin-top);
+  background: var(--main-content-background);
+  border: 1px solid var(--border-color);
+  border-radius: var(--content-border-radius);
+  overflow: hidden;
+}
+
+.view-container {
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* Scrollbar styling */
+.view-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.view-container::-webkit-scrollbar-track {
+  background: var(--scrollbar-track);
+  border-radius: 4px;
+}
+
+.view-container::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+  border-radius: 4px;
+}
+
+.view-container::-webkit-scrollbar-thumb:hover {
+  background: var(--scrollbar-thumb-hover);
+}
+
+/* Window container */
+.window-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100vw;
+  background: var(--background-transparent);
+  /* Hardware acceleration for smooth rendering */
+  transform: translateZ(0);
+  will-change: width, height;
+  backface-visibility: hidden;
+  -webkit-font-smoothing: subpixel-antialiased;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100vw;
+  background: var(--background-transparent);
+  /* Hardware acceleration for smooth rendering */
+  transform: translateZ(0);
+  will-change: width, height;
+  backface-visibility: hidden;
+  -webkit-font-smoothing: subpixel-antialiased;
+}

@@ -48,7 +48,7 @@ app.on('activate', () => {
 
 function setupGeneralIpcHandlers() {
     // Config-related IPC handlers
-    ipcMain.handle('set-onboarded', async (event) => {
+    ipcMain.handle('set-onboarded', async event => {
         try {
             const config = getLocalConfig();
             config.onboarded = true;
@@ -66,7 +66,7 @@ function setupGeneralIpcHandlers() {
             if (!validLevels.includes(stealthLevel)) {
                 throw new Error(`Invalid stealth level: ${stealthLevel}. Must be one of: ${validLevels.join(', ')}`);
             }
-            
+
             const config = getLocalConfig();
             config.stealthLevel = stealthLevel;
             writeConfig(config);
@@ -83,7 +83,7 @@ function setupGeneralIpcHandlers() {
             if (!validLayouts.includes(layout)) {
                 throw new Error(`Invalid layout: ${layout}. Must be one of: ${validLayouts.join(', ')}`);
             }
-            
+
             const config = getLocalConfig();
             config.layout = layout;
             writeConfig(config);
@@ -94,7 +94,7 @@ function setupGeneralIpcHandlers() {
         }
     });
 
-    ipcMain.handle('get-config', async (event) => {
+    ipcMain.handle('get-config', async event => {
         try {
             const config = getLocalConfig();
             return { success: true, config };
@@ -134,7 +134,6 @@ function setupGeneralIpcHandlers() {
     ipcMain.handle('update-content-protection', async (event, contentProtection) => {
         try {
             if (mainWindow) {
-
                 // Get content protection setting from localStorage via cheddar
                 const contentProtection = await mainWindow.webContents.executeJavaScript('cheddar.getContentProtection()');
                 mainWindow.setContentProtection(contentProtection);

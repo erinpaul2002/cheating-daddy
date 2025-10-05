@@ -3,8 +3,9 @@
     "productName": "cheating-daddy",
     "version": "0.4.0",
     "description": "cheating daddy",
-    "main": "src/index.js",
+    "main": "dist/index.js",
     "scripts": {
+        "build": "tsc && tsc --project tsconfig.renderer.json && tsc --project tsconfig.windowResize.json && npx vite build && xcopy src\\assets dist\\assets /E /I /Y",
         "start": "electron-forge start",
         "package": "electron-forge package",
         "make": "electron-forge make",
@@ -27,7 +28,22 @@
     "license": "GPL-3.0",
     "dependencies": {
         "@google/genai": "^1.2.0",
-        "electron-squirrel-startup": "^1.0.1"
+        "@radix-ui/react-label": "^2.1.7",
+        "@radix-ui/react-select": "^2.2.6",
+        "@radix-ui/react-slot": "^1.2.3",
+        "@radix-ui/react-switch": "^1.2.6",
+        "@radix-ui/react-tabs": "^1.1.13",
+        "class-variance-authority": "^0.7.1",
+        "clsx": "^2.1.1",
+        "electron-squirrel-startup": "^1.0.1",
+        "lit": "^3.3.1",
+        "lucide-react": "^0.544.0",
+        "react": "^19.2.0",
+        "react-dom": "^19.2.0",
+        "shadcn": "^3.3.1",
+        "tailwind-merge": "^3.3.1",
+        "tailwindcss": "^3.4.18",
+        "tailwindcss-animate": "^1.0.7"
     },
     "devDependencies": {
         "@electron-forge/cli": "^7.8.1",
@@ -40,11 +56,20 @@
         "@electron-forge/plugin-fuses": "^7.8.1",
         "@electron/fuses": "^1.8.0",
         "@reforged/maker-appimage": "^5.0.0",
+        "@testing-library/jest-dom": "^6.9.1",
+        "@testing-library/react": "^16.3.0",
         "@types/electron": "^1.6.10",
-        "@types/node": "^20.0.0",
-        "electron": "^30.0.5",
+        "@types/jest": "^30.0.0",
+        "@types/node": "^20.19.19",
+        "@types/react": "^19.2.0",
+        "@types/react-dom": "^19.2.0",
+        "@vitejs/plugin-react": "^5.0.4",
+        "autoprefixer": "^10.4.21",
+        "electron": "^38.2.1",
         "jsdom": "^23.2.0",
+        "postcss": "^8.5.6",
+        "ts-node": "^10.9.2",
         "typescript": "^5.0.0",
-        "vitest": "^1.6.1"
+        "vitest": "^3.2.4"
     }
 }

@@ -1,8 +1,7 @@
 import fs from 'fs';
 import os from 'os';
 import path from 'path';
-// Import from js-backup since this is testing the original JS implementation
-const { pcmToWav, saveDebugAudio } = require('../js-backup/audioUtils');
+import { pcmToWav, saveDebugAudio } from '../audioUtils';
 
 describe('audioUtils e2e', () => {
     it('creates wav and metadata files on disk', () => {

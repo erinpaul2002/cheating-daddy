@@ -29,13 +29,7 @@ interface AudioMetadata {
 }
 
 // Convert raw PCM to WAV format for easier playback and verification
-function pcmToWav(
-    pcmBuffer: Buffer,
-    outputPath: string,
-    sampleRate: number = 24000,
-    channels: number = 1,
-    bitDepth: number = 16
-): string {
+function pcmToWav(pcmBuffer: Buffer, outputPath: string, sampleRate: number = 24000, channels: number = 1, bitDepth: number = 16): string {
     const byteRate = sampleRate * channels * (bitDepth / 8);
     const blockAlign = channels * (bitDepth / 8);
     const dataSize = pcmBuffer.length;

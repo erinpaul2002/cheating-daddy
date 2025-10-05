@@ -185,7 +185,7 @@ export async function getStoredSetting(key: string, defaultValue: string): Promi
             await new Promise(resolve => setTimeout(resolve, 100));
 
             // Try to get setting from renderer process localStorage
-            const value = await windows[0].webContents.executeJavaScript(`
+            const value = (await windows[0].webContents.executeJavaScript(`
                 (function() {
                     try {
                         if (typeof localStorage === 'undefined') {
@@ -200,7 +200,7 @@ export async function getStoredSetting(key: string, defaultValue: string): Promi
                         return '${defaultValue}';
                     }
                 })()
-            `) as string;
+            `)) as string;
             return value;
         }
     } catch (error) {
@@ -578,14 +578,17 @@ export function setupGeminiIpcHandlers(geminiSessionRef: GeminiSessionRef): void
     // Store the geminiSessionRef globally for reconnection access
     global.geminiSessionRef = geminiSessionRef;
 
-    ipcMain.handle('initialize-gemini', async (event: IpcMainInvokeEvent, apiKey: string, customPrompt: string, profile: string = 'interview', language: string = 'en-US') => {
-        const session = await initializeGeminiSession(apiKey, customPrompt, profile, language);
-        if (session) {
-            geminiSessionRef.current = session;
-            return true;
+    ipcMain.handle(
+        'initialize-gemini',
+        async (event: IpcMainInvokeEvent, apiKey: string, customPrompt: string, profile: string = 'interview', language: string = 'en-US') => {
+            const session = await initializeGeminiSession(apiKey, customPrompt, profile, language);
+            if (session) {
+                geminiSessionRef.current = session;
+                return true;
+            }
+            return false;
         }
-        return false;
-    });
+    );
 
     ipcMain.handle('send-audio-content', async (event: IpcMainInvokeEvent, { data, mimeType }: AudioContent): Promise<InvokeResult> => {
         if (!geminiSessionRef.current) return { success: false, error: 'No active Gemini session' };
