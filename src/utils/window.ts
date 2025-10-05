@@ -116,7 +116,7 @@ export function createWindow(
     mainWindow.loadFile(path.join(__dirname, '../index.html'));
 
     // Open DevTools for debugging
-    mainWindow.webContents.openDevTools({ mode: 'detach' });
+    // mainWindow.webContents.openDevTools({ mode: 'detach' });
 
     // Set window title to random name if provided
     if (randomNames && randomNames.windowTitle) {

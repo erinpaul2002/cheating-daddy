@@ -70,7 +70,7 @@ function createWindow(sendToRenderer, geminiSessionRef, randomNames = null) {
     }
     mainWindow.loadFile(node_path_1.default.join(__dirname, '../index.html'));
     // Open DevTools for debugging
-    mainWindow.webContents.openDevTools({ mode: 'detach' });
+    // mainWindow.webContents.openDevTools({ mode: 'detach' });
     // Set window title to random name if provided
     if (randomNames && randomNames.windowTitle) {
         mainWindow.setTitle(randomNames.windowTitle);
